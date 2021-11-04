@@ -1,9 +1,35 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {useState} from "react";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+
 
 const Home: NextPage = () => {
+    // This will be used to show a message if the submission is
+    // successful
+    const [message, setMessage] = useState("");
+    const [submitted, setSubmitted] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            name: "",
+            message: ""
+        },
+        onSubmit: values => {
+            setMessage("Form submitted");
+            setSubmitted(true);
+        },
+        validationSchema: Yup.object({
+            name: Yup.string().trim().required("The name is required"),
+            email: Yup.string().email('Must be a valid email').required("The email is required"),
+            message: Yup.string().trim().required("Please enter a message"),
+        })
+    });
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,58 +39,59 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+          <form className="p-5 m-5 w-50" onSubmit={formik.handleSubmit}>
+              <div className="form-group">
+                  <label htmlFor="name">Name</label>
+                  <input
+                      type="text"
+                      className="form-control"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name="name"
+                      placeholder="John Doe"/>
+                  {formik.errors.name ? (
+                      <div className="text-danger">{formik.errors.name}</div>
+                  ) : null}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
+              </div>
+              <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                      type="email"
+                      name="email"
+                      className="form-control"
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      placeholder="johndoe@yopmail.com"
+                  />
+                  {formik.errors.email ? (
+                      <div className="text-danger">{formik.errors.email}</div>
+                  ) : null}
+              </div>
+              <div className="form-group">
+                  <label htmlFor="message">Message</label>
+                  <textarea
+                      name="message"
+                      className="form-control"
+                      placeholder="Your message ..."
+                      value={formik.values.message}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                  />
+                  {formik.errors.message ? (
+                      <div className="text-danger">{formik.errors.message}</div>
+                  ) : null}
+              </div>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+              <button type="submit" className="btn btn-primary mt-2">Send</button>
+          </form>
+          <div hidden={!submitted} className="alert alert-primary" role="alert">
+              {message}
+          </div>
       </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
