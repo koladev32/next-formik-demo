@@ -11,7 +11,7 @@ const Home: NextPage = () => {
     // This will be used to show a message if the submission is
     // successful
     const [message, setMessage] = useState("");
-    const [submitted, setSubmitted] = useState(false);
+    const [isSubmitSuccessful, setSubmittedSuccessful] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -21,7 +21,7 @@ const Home: NextPage = () => {
         },
         onSubmit: values => {
             setMessage("Form submitted");
-            setSubmitted(true);
+            setSubmittedSuccessful(true);
         },
         validationSchema: Yup.object({
             name: Yup.string().trim().required("The name is required"),
@@ -87,7 +87,7 @@ const Home: NextPage = () => {
 
                     <button type="submit" className="btn btn-primary mt-2">Send</button>
                 </form>
-                <div hidden={!submitted} className="alert alert-primary" role="alert">
+                <div hidden={!isSubmitSuccessful} className="alert alert-primary" role="alert">
                     {message}
                 </div>
             </main>
